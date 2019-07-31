@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: blender
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-secret: blender-master-auth
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+  namespace: blender-render
+spec:
+  tls:
+    - hosts:
+        - blender-cluster.example.com
+      secretName: blender-cluster-tls
+  rules:
+    - host: blender-cluster.example.com
+      http:
+        paths:
+          - backend:
+              serviceName: blender
+              servicePort: 8000

@@ -1,0 +1,29 @@
+# Master
+apiVersion: v1
+kind: Service
+metadata:
+  name: blender
+  namespace: blender-render
+  labels:
+    app: blender
+spec:
+  ports:
+    - name: blender
+      port: 8000
+  selector:
+    app: blender
+---
+# Slave
+apiVersion: v1
+kind: Service
+metadata:
+  name: blender-worker
+  namespace: blender-render
+  labels:
+    app: blender
+spec:
+  ports:
+    - name: blender
+      port: 8000
+  selector:
+    app: blender

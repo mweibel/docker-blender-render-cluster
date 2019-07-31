@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: blender
+  namespace: blender-render
+spec:
+  selector:
+    matchLabels:
+      app: blender
+  serviceName: blender
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: blender
+    spec:
+      containers:
+        - name: blender
+          image: d3v0x/blender-render-cluster
+          ports:
+            - name: blender
+              containerPort: 8000
+          command:
+            - bash
+            - "-c"
+            - |
+              set -ex
+              # get blender id from pod ordinal index.
+              [[ `hostname` =~ -([0-9]+)$ ]] || exit 1
+              ordinal=${BASH_REMATCH[1]}
+              # Start server with appropriate settings
+              if [[ $ordinal -eq 0 ]]; then
+                RENDER_MODE=MASTER blender -b -P /root/renderServerStartup.py
+              else
+                RENDER_MODE=SLAVE MASTER_PORT_8000_TCP_ADDR=blender-0.blender blender -b -P /root/renderServerStartup.py
+              fi
