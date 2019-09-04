@@ -14,9 +14,11 @@ spec:
       labels:
         app: blender
     spec:
+      imagePullSecrets:
+        - name: gitlab-auth
       containers:
         - name: blender
-          image: d3v0x/blender-render-cluster
+          image: registry.gitlab.com/mweibel/blender-render-cluster:1.2
           ports:
             - name: blender
               containerPort: 8000
@@ -30,7 +32,7 @@ spec:
               ordinal=${BASH_REMATCH[1]}
               # Start server with appropriate settings
               if [[ $ordinal -eq 0 ]]; then
-                RENDER_MODE=MASTER blender -b -P /root/renderServerStartup.py
+                RENDER_MODE=MASTER /usr/local/blender/blender -b -P /root/renderServerStartup.py
               else
-                RENDER_MODE=SLAVE MASTER_PORT_8000_TCP_ADDR=blender-0.blender blender -b -P /root/renderServerStartup.py
+                RENDER_MODE=SLAVE MASTER_PORT_8000_TCP_ADDR=blender-0.blender /usr/local/blender/blender -b -P /root/renderServerStartup.py
               fi

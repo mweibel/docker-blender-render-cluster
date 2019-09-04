@@ -18,7 +18,7 @@ if renderMode == False:
 
 logger.info("Set render mode to: " + renderMode)
 
-bpy.ops.wm.addon_enable(module="netrender")
+bpy.ops.preferences.addon_enable(module="netrender")
 bpy.context.scene.render.engine = 'NET_RENDER'
 
 if renderMode == 'MASTER':
